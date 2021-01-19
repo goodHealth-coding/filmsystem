@@ -1,41 +1,49 @@
 <template>
-    <div class="login_box" onmouseout="style.opacity='0.8'" onmouseover="style.opacity='1'">
-        <el-tabs type="border-card">
-            <el-tab-pane label="登录">
-                <div class="top_bar">
-                    <div class="name">电影推荐系统</div>
-                </div>
-                <div style="height: 30px;"></div>
-                <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
-                <el-input v-model="userName" placeholder="用户名" style="width:250px"></el-input>
-                <div style="height: 30px;"></div>
-                <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
-                <el-input v-model="password" placeholder="密码" style="width:250px" show-password></el-input>
-                <div style="height: 50px;"><span class="login_tips">{{login_error}}</span></div>
-                <el-button type="success" icon="el-icon-check"  @click="login" circle></el-button>
-                <div style="height: 140px;"></div>
-            </el-tab-pane>
-            <el-tab-pane label="注册">
-                <div class="top_bar">
-                    <div class="name">电影推荐系统</div>
-                    <div class=""></div>
-                </div>
-                <div style="height: 20px;"></div>
-                <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
-                <el-input v-model="age" placeholder="年龄" style="width:250px"></el-input>
-                <div style="height: 30px;"></div>
-                <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
-                <el-input v-model="sex" placeholder="性别" style="width:250px" show-password></el-input>
-                <div style="height: 30px;"></div>
-                <i class="fa fa-quora fa-2x" aria-hidden="true" style="float:left"></i>
-                <el-input v-model="occupation" placeholder="职业" style="width:250px"></el-input>
-                <div style="height: 30px;"></div>
-                <el-input v-model="password2" placeholder="密码" style="width:250px"></el-input>
-                <div style="height: 30px;"><span class="register_tips">{{register_error}}</span></div>
-                <el-button type="success" icon="el-icon-check"  @click="register" circle></el-button>
-                <div style="height: 140px;"></div>
-            </el-tab-pane>
-        </el-tabs>
+    <div>
+        <div class="top">
+            <img :src="require('../assets/login_top.png')" height="70px" width="100%">
+        </div>
+        <div class="left_bac">
+            <img :src="require('../assets/left_bac.png')" width="400px">
+        </div>
+        <div class="login_box" onmouseout="style.opacity='0.8'" onmouseover="style.opacity='1'">
+            <el-tabs type="border-card">
+                <el-tab-pane label="登录">
+                    <div class="top_bar">
+                        <div class="name">土豆电影网</div>
+                    </div>
+                    <div style="height: 30px;"></div>
+                    <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
+                    <el-input v-model="userName" placeholder="用户名" style="width:250px"></el-input>
+                    <div style="height: 30px;"></div>
+                    <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
+                    <el-input v-model="password" placeholder="密码" style="width:250px" show-password></el-input>
+                    <div style="height: 50px;"><span class="login_tips">{{login_error}}</span></div>
+                    <el-button type="success" icon="el-icon-check"  @click="login" circle></el-button>
+                    <div style="height: 140px;"></div>
+                </el-tab-pane>
+                <el-tab-pane label="注册">
+                    <div class="top_bar">
+                        <div class="name">土豆电影网</div>
+                        <div class=""></div>
+                    </div>
+                    <div style="height: 20px;"></div>
+                    <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
+                    <el-input v-model="age" placeholder="年龄" style="width:250px"></el-input>
+                    <div style="height: 30px;"></div>
+                    <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
+                    <el-input v-model="sex" placeholder="性别" style="width:250px" show-password></el-input>
+                    <div style="height: 30px;"></div>
+                    <i class="fa fa-quora fa-2x" aria-hidden="true" style="float:left"></i>
+                    <el-input v-model="occupation" placeholder="职业" style="width:250px"></el-input>
+                    <div style="height: 30px;"></div>
+                    <el-input v-model="password2" placeholder="密码" style="width:250px"></el-input>
+                    <div style="height: 30px;"><span class="register_tips">{{register_error}}</span></div>
+                    <el-button type="success" icon="el-icon-check"  @click="register" circle></el-button>
+                    <div style="height: 140px;"></div>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
     </div>
 </template>
 
@@ -95,21 +103,36 @@
                 }).finally(function () {
                     console.log('完成！');
                 });
+            },
+            register(){
+
             }
+
         }
     }
 </script>
 
 <style scoped>
+    .top{
+        height: 50px;
+        width: 100%;
+        /*background: url("../assets/login_top.png");*/
+    }
+    .left_bac{
+        width: 350px;
+        height: 450px;
+        margin-top: 5%;
+        margin-left: 10%;
+    }
     .login_box {
         opacity: 0.8;
         width: 350px;
-        height: 500px;
+        height: 450px;
         background: #f5f5f5;
         border-radius: 4px;
         position: absolute;
-        top: 50%;
-        left: 50%;
+        top: 60%;
+        left: 70%;
         transform: translate(-50%,-50%);
         -webkit-transform: translate(-50%,-50%);
         overflow: hidden;
@@ -117,7 +140,7 @@
     }
     .top_bar {
         width: 100%;
-        height: 64px;
+        height: 50px;
     }
     .top_bar .name {
         text-align: center;
