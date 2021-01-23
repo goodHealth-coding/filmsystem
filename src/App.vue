@@ -30,7 +30,7 @@
             // }).catch(function (error) {
             //     // 处理异常结果
             //     console.log(JSON.stringify(error));
-            //     console.log(error.result);
+            //     console.log(error.result);,
             // }).finally(function () {
             //     console.log('完成！');
             // });
