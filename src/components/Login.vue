@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="app">
         <div class="top">
             <img :src="require('../assets/login_top.png')" height="70px" width="100%">
         </div>
@@ -86,6 +86,8 @@
                         return;
                     }
                     else if(val==2) {
+                        let session = window.sessionStorage;      // 使用一个session对象保存登录状态
+                        session.setItem('user', this.userName);   // 记录登录的用户
                         // this.$router.push({name: 'chat', params: userInfo}
                         this.$router.push({name: 'Film'});
                     }
@@ -113,6 +115,14 @@
 </script>
 
 <style scoped>
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: black;
+        vertical-align: center;
+    }
     .top{
         height: 50px;
         width: 100%;
