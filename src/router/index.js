@@ -11,12 +11,19 @@ export default new Router({
         {
             path: '/',
             name: 'Login',
-            component: Login
+            component: Login,
+            meta:{
+                title: 'home', //主页
+            }
         },
         {
             path: '/Film',
             name: 'Film',
-            component: Film
+            component: Film,
+            meta:{
+                title: 'film',
+                needLogin: true,
+            }
         }
     ]
 })
