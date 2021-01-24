@@ -9,7 +9,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 Vue.use(router);
 
-// 设置路由跳转限制
+//设置路由跳转限制
 // router.beforeEach((to, from, next)=> {
 //
 //   // 跳转到需要登录的页面
