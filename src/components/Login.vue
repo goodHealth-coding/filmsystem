@@ -34,15 +34,61 @@
                         <el-input v-model="check_code" placeholder="验证码" style="width:260px"></el-input>
                         <button @click.prevent="getCode()"  class="code-btn" :disabled="!show">
                             <span v-show="show">获取验证码</span>
-                            <span v-show="!show" class="count">{{count}} s</span>
+                            <span v-show="!show">{{count}} s</span>
                         </button>
                     </el-form>
+                    <div style="height: 50px;">
+                        <span class="login_tips">{{code_error}}</span>
+                        <span class="login_tips">{{mail_error}}</span>
+                    </div>
+                    <el-button type="success" icon="el-icon-check"  @click="mailLogin" circle></el-button>
+                    <div style="height: 140px;"></div>
+                </el-tab-pane>
+                <el-tab-pane label="注册">
+                    <div class="top_bar">
+                        <div class="name">土豆电影网</div>
+                    </div>
                     <div style="height: 30px;"></div>
-                    <el-button type="success" icon="el-icon-check"  @click="register" circle></el-button>
+                    <el-input v-model="res_mail" placeholder="邮箱" style="width:260px"></el-input>
+                    <div style="height: 30px;"></div>
+                    <el-form class="pr">
+                        <el-input v-model="res_code" placeholder="验证码" style="width:260px"></el-input>
+                        <button @click.prevent="resCode()"  class="code-btn" :disabled="!show">
+                            <span v-show="show">获取验证码</span>
+                            <span v-show="!show">{{count}} s</span>
+                        </button>
+                    </el-form>
+                    <div style="height: 50px;"><span class="login_tips">{{register_error}}</span></div>
+                    <el-button type="success" icon="el-icon-check"  @click="nextStep" circle></el-button>
                     <div style="height: 140px;"></div>
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <el-container>
+            <el-dialog :visible.sync="dialog_show" width="50%" style=" text-align: center;" :before-close="handleClose">
+                <div style="color: #999">个人信息填写</div>
+                <div style="height: 20px;"></div>
+                <el-input v-model="age" placeholder="年龄" style="width:200px;" @change="check_age"></el-input>
+                <div style="height: 20px;"><span style="color: #999;font-size: 12px">{{ageTip}}</span></div>
+                <el-form label="性别">
+                    <el-select v-model="sex" placeholder="请选择" style="width: 200px">
+                        <el-option v-for="item in sexArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                </el-form>
+                <div style="height: 20px;"></div>
+                <el-form label="职业">
+                    <el-select v-model="occupation" placeholder="请选择" style="width: 200px">
+                        <el-option v-for="item in occArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                </el-form>
+                <div style="height: 20px;"></div>
+                <el-input v-model="password1" placeholder="密码" style="width:200px" show-password></el-input>
+                <span slot="footer">
+                    <el-button @click="dialog_show = false">取 消</el-button>
+                    <el-button type="primary" @click="register">确 定</el-button>
+                </span>
+            </el-dialog>
+        </el-container>
     </div>
 </template>
 
@@ -56,16 +102,50 @@
                 userName: '',
                 password: '',
                 e_mail: '',
+                res_mail: '',
                 check_code: '',
+                res_code: '',
                 age: '',
-                password2: '',
+                password1: '',
                 sex: '',
                 occupation: '',
+                mailbox: '',
                 login_error: '',
+                code_error: '',
+                mail_error: '',
                 register_error: '',
                 show: true,
+                dialog_show: true,
                 count: 0,
-                timer: 0
+                timer: 0,
+                ageTip: '',
+                sexArr: [
+                    {value: 'M', label: 'M'},
+                    {value: 'F', label: 'F'}
+                ],
+                occArr: [
+                    {value: 'administrator', label: 'administrator'},
+                    {value: 'artist', label: 'artist'},
+                    {value: 'doctor', label: 'doctor'},
+                    {value: 'educator', label: 'educator'},
+                    {value: 'engineer', label: 'engineer'},
+                    {value: 'entertainment', label: 'entertainment'},
+                    {value: 'executive', label: 'executive'},
+                    {value: 'healthcare', label: 'healthcare'},
+                    {value: 'homemaker', label: 'homemaker'},
+                    {value: 'lawyer', label: 'lawyer'},
+                    {value: 'librarian', label: 'librarian'},
+                    {value: 'marketing', label: 'marketing'},
+                    {value: 'none', label: 'none'},
+                    {value: 'other', label: 'other'},
+                    {value: 'programmer', label: 'programmer'},
+                    {value: 'retired', label: 'retired'},
+                    {value: 'salesman', label: 'salesman'},
+                    {value: 'scientist', label: 'scientist'},
+                    {value: 'student', label: 'student'},
+                    {value: 'technician', label: 'technician'},
+                    {value: 'writer', label: 'writer'}
+                ]
             }
         },
         mounted: function(){
@@ -73,8 +153,9 @@
         },
         methods: {
             async login(){
+                // 账号密码登录
                 axios.post(
-                    'http://chenda.work:8866/login',
+                    'http://chenda.work:8866/login/password',
                     {
                         username: this.userName,
                         password: this.password
@@ -110,7 +191,7 @@
                     console.log('登录检测完成！');
                 });
             },
-            register(){
+            async mailLogin(){
                 //邮箱及验证码登录
                 axios.post(
                     'http://chenda.work:8866/login/mailbox',
@@ -119,7 +200,38 @@
                         verificationCode: this.check_code
                     }
                 ).then((res)=>{
-                    this.$router.push({name: 'Film'});
+                    let a = res.data.result;
+                    if(a==1){
+                        this.mail_error = "邮箱未注册";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.mail_error = '';
+                        }, 1500);
+                        return;
+                    }
+                    else if(a==2){
+                        let userId = res.data.userId;
+                        console.log("用户："+userId);
+                        let session = window.sessionStorage;      // 使用一个session对象保存登录状态
+                        session.setItem('user', userId);   // 记录登录的用户
+                        this.$router.push({name: 'Film'});
+                    }
+                    else if(a==3){
+                        this.mail_error = "验证码错误";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.mail_error = '';
+                        }, 1500);
+                        return;
+                    }
+                    else if(a==4){
+                        this.mail_error = "验证码过期,请重新获取";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.mail_error = '';
+                        }, 1500);
+                        return;
+                    }
                 }).catch(function () {
                     console.log(JSON.stringify(error));
                     console.log(error.result);
@@ -127,32 +239,245 @@
                 })
             },
             getCode(){
+                //邮箱登录-获取验证码
                 let url = 'http://chenda.work:8866/sendEmail/'+this.e_mail;
                 axios.get(
                     url,
                 ).then((res)=>{
-                    let a = res.data;
-                    console.log(a);
+                    let b = res.data;
+                    if(b==1){
+                        this.code_error = "邮箱未注册";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.code_error = '';
+                        }, 1500);
+                        if(!this.timer){
+                            this.count = 1;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 1) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
+                        }
+                        return;
+                    }
+                    else if(b==2){
+                        if(!this.timer){
+                            this.count = 60;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 60) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
+                        }
+                        return;
+                    }
+                    else if(b==3){
+                        this.code_error = "邮箱不存在";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.code_error = '';
+                        }, 1500);
+                        if(!this.timer){
+                            this.count = 1;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 1) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
+                        }
+                        return;
+                    }
                 }).catch(function (error) {
                     console.log(JSON.stringify(error));
                     console.log(error.result);
                 }).finally(function () {
-                    console.log("获取验证码成功")
+                    console.log("检测邮箱成功")
                 })
-                if(!this.timer){
-                    this.count = 60;
-                    this.show = false;
-                    this.timer = setInterval(() => {
-                        if (this.count > 0 && this.count <= 60) {
-                            this.count--;
-                        } else {
-                            this.show = true;
-                            clearInterval(this.timer);
-                            this.timer = null;
+            },
+            resCode(){
+                //注册-获取验证码
+                let url1 = 'http://chenda.work:8866/register/'+this.res_mail;
+                axios.get(
+                    url1,
+                ).then((res)=>{
+                    let c = res.data;
+                    if(c==1){
+                        this.register_error = "邮箱已注册，请直接登录";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        if(!this.timer){
+                            this.count = 1;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 1) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
                         }
-                    }, 1000);
+                        return;
+                    }
+                    else if(c==2){
+                        if(!this.timer){
+                            this.count = 60;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 60) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
+                        }
+                        return;
+                    }
+                    else if(c==3){
+                        this.register_error = "邮箱不存在";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        if(!this.timer){
+                            this.count = 1;
+                            this.show = false;
+                            this.timer = setInterval(() => {
+                                if (this.count > 0 && this.count <= 1) {
+                                    this.count--;
+                                } else {
+                                    this.show = true;
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }
+                            }, 1000);
+                        }
+                        return;
+                    }
+                })
+            },
+            nextStep(){
+                //邮箱注册验证
+                axios.post(
+                    'http://chenda.work:8866/register/mailboxCheck',
+                    {
+                        mailbox: this.res_mail,
+                        verificationCode: this.res_code
+                    }
+                ).then((res)=>{
+                    let d = res.data;
+                    if(d==1){
+                        this.register_error = "邮箱已注册，请直接登录";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        return;
+                    }
+                    else if(d==2){
+                        this.dialog_show = true;
+                    }
+                    else if(d==3){
+                        this.register_error = "验证码错误";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        return;
+                    }
+                    else if(d==4){
+                        this.register_error = "验证码过期,请重新获取";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        return;
+                    }
+                })
+            },
+            handleClose(done) {
+                //关闭注册信息弹窗
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => {});
+            },
+            check_age(value){
+                //检测注册的年龄是否合法
+                let reg = /^[1-9]\d*$/;
+                let _this = this;
+                if (value) {
+                    if (new RegExp(reg).test(value) == false) {
+                        _this.ageTip = "请输入正确年龄";
+                        setTimeout(() => {
+                            _this.ageTip = "";
+                        }, 1500); }
+
+                    else {
+                        this.errorTip = false;
+                    }
                 }
-            }
+            },
+            async register(){
+                axios.post(
+                    'http://chenda.work:8866/register/add/userEntity',
+                    {
+                        age: this.age,
+                        sex: this.sex,
+                        occupation: this.occupation,
+                        password: this.password1,
+                        mailbox: this.res_mail
+                    }
+                ).then((res)=>{
+                    this.dialog_show = false;
+                    let e = res.data.result;
+                    if(e==1){
+                        this.register_error = "邮箱已注册，请直接登录";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        return;
+                    }
+                    else if(e==2){
+                        let userId = res.data.userId;
+                        console.log("用户："+userId);
+                        let session = window.sessionStorage;      // 使用一个session对象保存登录状态
+                        session.setItem('user', userId);   // 记录登录的用户
+                        this.$router.push({name: 'Film'});
+                    }
+                    else if(e==3){
+                        this.register_error = "注册出错";
+                        let _this = this;
+                        setTimeout(function(){
+                            _this.register_error = '';
+                        }, 1500);
+                        return;
+                    }
+                })
+            },
         }
     }
 </script>
