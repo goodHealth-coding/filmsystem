@@ -57,31 +57,31 @@
             <div style="height: 15px;width: 60%"></div>
             <ul class="film_list">          <!--  猜你喜欢电影列表  -->
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">神秘博士元旦特集：戴立克革命</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">神秘博士元旦特集：戴立克革命</div>
                 </li>
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">11</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">11</div>
                 </li>
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">11</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">11</div>
                 </li>
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">11</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">11</div>
                 </li>
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">神秘博士元旦特集：戴立克革命</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">神秘博士元旦特集：戴立克革命</div>
                 </li>
             </ul>
             <div style="width: 60%;color: white;font-size: 20px">6</div>
             <ul class="film_list">
                 <li class="hot_film">
-                    <img :src="require('../assets/left_bac.png')" width="90%">
-                    <div style="width: 100%;text-align: center;font-size: 13px;color: #1590d1">11</div>
+                    <img src="http://chenda.work/imdb/jpg/1.jpg" width="80%">
+                    <div style="width: 80%;text-align: center;font-size: 13px;color: #1590d1">11</div>
                 </li>
             </ul>
         </div>

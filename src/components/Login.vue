@@ -8,7 +8,7 @@
         </div>
         <div class="login_box" onmouseout="style.opacity='0.8'" onmouseover="style.opacity='1'">
             <el-tabs type="border-card">
-                <el-tab-pane label="登录">
+                <el-tab-pane label="密码登录">
                     <div class="top_bar">
                         <div class="name">土豆电影网</div>
                     </div>
@@ -22,23 +22,22 @@
                     <el-button type="success" icon="el-icon-check"  @click="login" circle></el-button>
                     <div style="height: 140px;"></div>
                 </el-tab-pane>
-                <el-tab-pane label="注册">
+                <el-tab-pane label="邮箱登录">
                     <div class="top_bar">
                         <div class="name">土豆电影网</div>
-                        <div class=""></div>
                     </div>
-                    <div style="height: 20px;"></div>
+                    <div style="height: 30px;"></div>
                     <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
-                    <el-input v-model="age" placeholder="年龄" style="width:250px"></el-input>
+                    <el-input v-model="e_mail" placeholder="邮箱" style="width:260px"></el-input>
                     <div style="height: 30px;"></div>
-                    <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
-                    <el-input v-model="sex" placeholder="性别" style="width:250px" show-password></el-input>
+                    <el-form class="pr">
+                        <el-input v-model="check_code" placeholder="验证码" style="width:260px"></el-input>
+                        <button @click.prevent="getCode()"  class="code-btn" :disabled="!show">
+                            <span v-show="show">获取验证码</span>
+                            <span v-show="!show" class="count">{{count}} s</span>
+                        </button>
+                    </el-form>
                     <div style="height: 30px;"></div>
-                    <i class="fa fa-quora fa-2x" aria-hidden="true" style="float:left"></i>
-                    <el-input v-model="occupation" placeholder="职业" style="width:250px"></el-input>
-                    <div style="height: 30px;"></div>
-                    <el-input v-model="password2" placeholder="密码" style="width:250px"></el-input>
-                    <div style="height: 30px;"><span class="register_tips">{{register_error}}</span></div>
                     <el-button type="success" icon="el-icon-check"  @click="register" circle></el-button>
                     <div style="height: 140px;"></div>
                 </el-tab-pane>
@@ -56,12 +55,17 @@
             return {
                 userName: '',
                 password: '',
+                e_mail: '',
+                check_code: '',
                 age: '',
                 password2: '',
                 sex: '',
                 occupation: '',
                 login_error: '',
-                register_error: ''
+                register_error: '',
+                show: true,
+                count: 0,
+                timer: 0
             }
         },
         mounted: function(){
@@ -103,11 +107,51 @@
                     console.log(JSON.stringify(error));
                     console.log(error.result);
                 }).finally(function () {
-                    console.log('完成！');
+                    console.log('登录检测完成！');
                 });
             },
             register(){
-
+                //邮箱及验证码登录
+                axios.post(
+                    'http://chenda.work:8866/login/mailbox',
+                    {
+                        mailbox: this.e_mail,
+                        verificationCode: this.check_code
+                    }
+                ).then((res)=>{
+                    this.$router.push({name: 'Film'});
+                }).catch(function () {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+                })
+            },
+            getCode(){
+                let url = 'http://chenda.work:8866/sendEmail/'+this.e_mail;
+                axios.get(
+                    url,
+                ).then((res)=>{
+                    let a = res.data;
+                    console.log(a);
+                }).catch(function (error) {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+                    console.log("获取验证码成功")
+                })
+                if(!this.timer){
+                    this.count = 60;
+                    this.show = false;
+                    this.timer = setInterval(() => {
+                        if (this.count > 0 && this.count <= 60) {
+                            this.count--;
+                        } else {
+                            this.show = true;
+                            clearInterval(this.timer);
+                            this.timer = null;
+                        }
+                    }, 1000);
+                }
             }
         }
     }
@@ -169,5 +213,22 @@
         margin-top: 5px;
         font-size: 12px;
         color: #999;
+    }
+    .pr {
+        position: relative;
+    }
+    .code-btn {
+        width: 80px;
+        height: 20px;
+        position: absolute;
+        top: 10px;
+        right: 30px;
+        color: #47a4fc;
+        font-size: 12px;
+        border: none;
+        border-left: 1px solid #bababa;
+        padding-left: 10px;
+        background: white;
+        cursor: pointer;
     }
 </style>
