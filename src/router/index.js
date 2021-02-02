@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Film from '@/components/Film'
+import Classify from '@/components/Classify'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
                 title: 'film',
                 needLogin: true,
             }
+        },
+        {
+            path: '/Classify',
+            name: 'Classify',
+            component: Classify
         }
     ]
 })

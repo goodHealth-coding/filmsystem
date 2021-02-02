@@ -115,7 +115,7 @@
                 mail_error: '',
                 register_error: '',
                 show: true,
-                dialog_show: true,
+                dialog_show: false,
                 count: 0,
                 timer: 0,
                 ageTip: '',
@@ -171,9 +171,9 @@
                         return;
                     }
                     else if(val==2) {
+                        let userInfo = {'userName': this.userName};
                         let session = window.sessionStorage;      // 使用一个session对象保存登录状态
                         session.setItem('user', this.userName);   // 记录登录的用户
-                        // this.$router.push({name: 'chat', params: userInfo}
                         this.$router.push({name: 'Film'});
                     }
                     else if(val==3){
@@ -375,6 +375,11 @@
                         }
                         return;
                     }
+                }).catch(function (error) {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+
                 })
             },
             nextStep(){
@@ -414,6 +419,11 @@
                         }, 1500);
                         return;
                     }
+                }).catch(function (error) {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+
                 })
             },
             handleClose(done) {
@@ -476,6 +486,11 @@
                         }, 1500);
                         return;
                     }
+                }).catch(function (error) {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+
                 })
             },
         }
@@ -555,5 +570,9 @@
         padding-left: 10px;
         background: white;
         cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 </style>
