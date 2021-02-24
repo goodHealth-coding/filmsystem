@@ -99,7 +99,7 @@
         name: "Login",
         data () {
             return {
-                userName: '',
+                userId: '',
                 password: '',
                 e_mail: '',
                 res_mail: '',
@@ -157,7 +157,7 @@
                 axios.post(
                     'http://chenda.work:8866/login/password',
                     {
-                        username: this.userName,
+                        username: this.userId,
                         password: this.password
                     }
                 ).then((res)=>{
@@ -171,9 +171,9 @@
                         return;
                     }
                     else if(val==2) {
-                        let userInfo = {'userName': this.userName};
+                        //let userInfo = {'userName': this.userId};
                         let session = window.sessionStorage;      // 使用一个session对象保存登录状态
-                        session.setItem('user', this.userName);   // 记录登录的用户
+                        session.setItem('user', this.userId);   // 记录登录的用户
                         this.$router.push({name: 'Film'});
                     }
                     else if(val==3){

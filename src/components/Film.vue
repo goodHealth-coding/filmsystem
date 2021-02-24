@@ -6,8 +6,21 @@
                 <span v-html="msg"></span>
                 <span style="font-size: 13px;cursor: pointer;" @click="toClassify">分类</span>
             </div>
-            <div class="person">
-                <el-button style="border: 0;margin-top: 5px">我的</el-button>
+            <div style="width: 10%;height: 10px"></div>
+            <div class="person" v-on:mouseover="user_show=1" v-on:mouseout="user_show=0">
+                <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%">
+            </div>
+            <div class="userBox" v-show="user_show">
+                <div style="margin-left: 20px;margin-top: 20px">
+                    <div style="height: 40px"><p><span>账号：</span>{{userInfo.id}}</p></div>
+                    <div style="height: 40px"><p><span>密码：</span>{{userInfo.code}}</p></div>
+                    <div style="height: 40px"><p><span>性别：</span>{{userInfo.sex}}</p></div>
+                    <div style="height: 40px"><p><span>年龄：</span>{{userInfo.age}}</p></div>
+                    <div style="height: 40px"><p><span>职业：</span>{{userInfo.occupation}}</p></div>
+                    <div style="height: 40px" v-if="userInfo.mailbox!=null">
+                        <p><span>邮箱：</span>{{userInfo.mailbox}}</p>
+                    </div>
+                </div>
             </div>
         </div>
         <div style="height: 30px"></div>
@@ -141,6 +154,8 @@
             return {
                 msg: '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
                 userId: '',
+                userInfo: '',
+                user_show: 0,
                 popular_movie:[],
                 popular_show: 1,
                 high_score: [],
@@ -152,6 +167,23 @@
 
             this.userId = window.sessionStorage.user;   // 从session中获取userId
             console.log('欢迎, ' + this.userId);
+
+            //获取用户信息
+            axios.post(
+                'http://chenda.work:8866/get/userEntity',
+                {
+                    id: this.userId
+                }
+            ).then((res)=>{
+                this.userInfo = res.data;
+                let session = window.sessionStorage;      // 使用一个session对象保存用户信息
+                session.setItem('userInfo', JSON.stringify(this.userInfo));
+            }).catch(function (error) {
+                console.log(JSON.stringify(error));
+                console.log(error.result);
+            }).finally(function (error) {
+
+            });
 
             // 获取前20热度的电影
             axios.post(
@@ -238,7 +270,7 @@
                 id = id.substring(index1+1, index2);
                 this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
             },
-            //前往电影详情页面（movieId字符串不是图片路径）
+            //前往电影详情页面（movieId字符串是电影id）
             toMovieInfo1(id){
                 this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
             },
@@ -254,12 +286,26 @@
     }
     .logo{
         float: left;
+        height: 60px;
         width: 90%;
         color: #1a94ff;
     }
     .person{
-        float: right;
+        height: 40px;
+        float: left;
         width: 10%;
+        cursor: pointer;
+    }
+    .userBox{
+        width: 200px;
+        height: 260px;
+        position: absolute;
+        top: 30px;
+        right: 8%;
+        z-index: 1000;
+        background: white;
+        border: 2px solid #DDDDDD;
+        border-radius: 20px;
     }
     .middle{
         width: 90%;

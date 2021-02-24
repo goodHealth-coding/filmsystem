@@ -4,8 +4,21 @@
             <div class="logo">
                 <span style="font-size: 35px;margin-left: 20px">土豆电影</span>
             </div>
-            <div class="person">
-                <el-button style="border: 0;margin-top: 5px">我的</el-button>
+            <div style="width: 10%;height: 10px"></div>
+            <div class="person" v-on:mouseover="user_show=1" v-on:mouseout="user_show=0">
+                <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%">
+            </div>
+            <div class="userBox" v-show="user_show">
+                <div style="margin-left: 20px;margin-top: 20px">
+                    <div style="height: 40px"><p><span>账号：</span>{{userInfo.id}}</p></div>
+                    <div style="height: 40px"><p><span>密码：</span>{{userInfo.code}}</p></div>
+                    <div style="height: 40px"><p><span>性别：</span>{{userInfo.sex}}</p></div>
+                    <div style="height: 40px"><p><span>年龄：</span>{{userInfo.age}}</p></div>
+                    <div style="height: 40px"><p><span>职业：</span>{{userInfo.occupation}}</p></div>
+                    <div style="height: 40px" v-if="userInfo.mailbox!=null">
+                        <p><span>邮箱：</span>{{userInfo.mailbox}}</p>
+                    </div>
+                </div>
             </div>
         </div>
         <div style="height: 30px"></div>
@@ -64,12 +77,18 @@
         name: "Classify",
         data(){
             return{
+                userInfo: '',
+                user_show: 0,
                 all_movie: [],
                 all_num: 30,
                 rank_mark: -1,
             }
         },
         mounted: function () {
+
+            let userJsonStr = window.sessionStorage.getItem('userInfo');
+            this.userInfo = JSON.parse(userJsonStr);
+
             //获取全部影片
             axios.post(
                 'http://chenda.work:8866/get/movieList/movieType',
@@ -147,11 +166,25 @@
     .logo{
         float: left;
         width: 90%;
+        height: 60px;
         color: #1a94ff;
     }
     .person{
-        float: right;
+        float: left;
         width: 10%;
+        height: 40px;
+        cursor: pointer;
+    }
+    .userBox{
+        width: 200px;
+        height: 260px;
+        position: absolute;
+        top: 30px;
+        right: 8%;
+        z-index: 1000;
+        background: white;
+        border: 2px solid #DDDDDD;
+        border-radius: 20px;
     }
     .middle{
         width: 90%;
