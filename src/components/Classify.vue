@@ -35,7 +35,7 @@
             <div style="height: 30px;float: left;width: 100%"></div>
             <ul class="film_list">
                 <li class="hot_film" v-for="(movie,index) in all_movie" v-bind:key="index">
-                    <div v-if="index<all_num">
+                    <div v-if="index<all_num" @click="toMovieInfo(movie.movieId)">
                         <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
                         <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
                     </div>
@@ -124,7 +124,16 @@
                 }).finally(function () {
 
                 })
-            }
+            },
+
+            //前往电影详情页面（movieId字符串是图片路径）
+            toMovieInfo(id){
+                let index1 = id.lastIndexOf("/");
+                let index2 = id.lastIndexOf(".");
+                id = id.substring(index1+1, index2);
+                this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
+            },
+
         }
     }
 </script>
@@ -198,6 +207,7 @@
         list-style: none;
         float: left;
         width: 20%;
+        cursor: pointer;
     }
     .movie_name{
         height: 25px;

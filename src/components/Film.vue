@@ -12,7 +12,7 @@
         </div>
         <div style="height: 30px"></div>
         <div class="middle">
-            <span style="color: rgba(101, 101, 101, 1)">热门电影</span>
+            <div style="color: rgba(101, 101, 101, 1)">热门电影</div>
             <div style="height: 15px"></div>
             <div style="width: 60%;">
                 <div style="color: rgba(11,21,22,0.38);float: right;font-size: 14px">{{popular_show}}/2</div>
@@ -25,42 +25,40 @@
             <div style="height: 20px;"></div>
             <ul class="film_list">         <!--  热门电影列表  -->
                 <li class="hot_film" v-for="(movie, index) in popular_movie" v-bind:key="index">
-                    <a href="" style="text-decoration: none">
-                        <div v-if="index<10 && popular_show==1">
-                            <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
-                            <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
-                            <div style="width: 80%;height: 36px">
-                                <center>
-                                    <div class="star">
-                                        <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
-                                        <div class="lightStar"></div>
-                                        <span class="num">{{movie.avgScore}}分</span>
-                                    </div>
-                                </center>
-                            </div>
+                    <div v-if="index<10 && popular_show==1"  @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
                         </div>
-                        <div v-if="index>9 && popular_show==2">
-                            <img :src=movie.movieId alt="图片" width="80%">
-                            <div class="movie_name">{{movie.movieTitle}}</div>
-                            <div style="width: 80%;height: 36px">
-                                <center>
-                                    <div class="star">
-                                        <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
-                                        <div class="lightStar"></div>
-                                        <span class="num">{{movie.avgScore}}分</span>
-                                    </div>
-                                </center>
-                            </div>
+                    </div>
+                    <div v-if="index>9 && popular_show==2" @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
                         </div>
-                    </a>
+                    </div>
                 </li>
             </ul>
             <div class="charts">
-                <div class="line_s"><span class="mid_text">评分排行榜</span></div>
+                <div class="line_s"><span class="mid_text">口碑榜</span></div>
                 <div style="height: 50px"></div>
                 <ol style="margin-left: 8%">
                     <li v-for="(movie, index) in high_score" v-bind:key="index" style="color: #0f80ff">
-                        <span class="ranking">{{movie.movieTitle}}</span>
+                        <span class="ranking" @click="toMovieInfo1(movie.movieId)">{{movie.movieTitle}}</span>
                         <div style="height: 20px;"></div>
                     </li>
                 </ol>
@@ -79,47 +77,45 @@
             <div style="height: 15px;width: 60%"></div>
             <ul class="film_list">          <!--  猜你喜欢电影列表  -->
                 <li class="hot_film" v-for="(movie, index) in recommend" v-bind:key="index">
-                    <a href="" style="text-decoration: none">
-                        <div v-if="index<10 && rec_show==1">
-                            <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
-                            <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
-                            <div style="width: 80%;height: 36px">
-                                <center>
-                                    <div class="star">
-                                        <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
-                                        <div class="lightStar"></div>
-                                        <span class="num">{{movie.avgScore}}分</span>
-                                    </div>
-                                </center>
-                            </div>
+                    <div v-if="index<10 && rec_show==1" @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
                         </div>
-                        <div v-if="index<20 && index>9 && rec_show==2">
-                            <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
-                            <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
-                            <div style="width: 80%;height: 36px">
-                                <center>
-                                    <div class="star">
-                                        <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
-                                        <div class="lightStar"></div>
-                                        <span class="num">{{movie.avgScore}}分</span>
-                                    </div>
-                                </center>
-                            </div>
+                    </div>
+                    <div v-if="index<20 && index>9 && rec_show==2" @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
                         </div>
-                        <div v-if="index>19 && rec_show==3">
-                            <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
-                            <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
-                            <div style="width: 80%;height: 36px">
-                                <center>
-                                    <div class="star">
-                                        <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
-                                        <div class="lightStar"></div>
-                                        <span class="num">{{movie.avgScore}}分</span>
-                                    </div>
-                                </center>
-                            </div>
+                    </div>
+                    <div v-if="index>19 && rec_show==3" @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
                         </div>
-                    </a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -154,7 +150,7 @@
         },
         mounted: function () {
 
-            this.userId = window.sessionStorage.user;   // 从session中获取userName
+            this.userId = window.sessionStorage.user;   // 从session中获取userId
             console.log('欢迎, ' + this.userId);
 
             // 获取前20热度的电影
@@ -234,7 +230,18 @@
             //分类页面跳转
             toClassify(){
                 this.$router.push({name: 'Classify'});
-            }
+            },
+            //前往电影详情页面（movieId字符串是图片路径）
+            toMovieInfo(id){
+                let index1 = id.lastIndexOf("/");
+                let index2 = id.lastIndexOf(".");
+                id = id.substring(index1+1, index2);
+                this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
+            },
+            //前往电影详情页面（movieId字符串不是图片路径）
+            toMovieInfo1(id){
+                this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
+            },
         }
     }
 </script>
@@ -266,6 +273,7 @@
         list-style: none;
         float: left;
         width: 20%;
+        cursor: pointer;
     }
     .line {
         position: relative;
