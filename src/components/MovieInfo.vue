@@ -3,12 +3,31 @@
         <div class="top">
             <div class="logo">
                 <span style="font-size: 35px;margin-left: 20px">土豆电影</span>
+                <span v-html="msg"></span>
+                <span style="font-size: 13px;cursor: pointer;" @click="toFilm">主页</span>
+                <span v-html="msg"></span>
+                <span style="font-size: 13px;cursor: pointer;" @click="toClassify">分类</span>
             </div>
             <div style="width: 10%;height: 10px"></div>
-            <div class="person" v-on:mouseover="user_show=1" v-on:mouseout="user_show=0">
-                <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%">
+            <div class="person">
+                <div class="me" v-on:mousedown="fav_show=!fav_show">
+                    <img :src="require('../assets/favourite.jpg')" style="height: 40px;width: 70%;border-radius: 50%">
+                </div>
+                <div class="me" v-on:mousedown="user_show=!user_show">
+                    <img :src="require('../assets/me.jpg')" style="height: 40px;width: 70%;border-radius: 50%;">
+                </div>
             </div>
-            <div class="userBox" v-show="user_show">
+            <div class="favourites" v-if="fav_show">
+                <div style="height: 10px"></div>
+                <ul style="margin-left: 10px">
+                    <li class="oneMovie" v-for="(movie, index) in collectedMovie" v-bind:key="index"
+                        @click="toMovieInfo(movie.movieId)">
+                        <img :src="movie.movieId" style="float: left;width: 30px;height: 30px;border-radius: 50%">
+                        <div style="margin-top: 6px;"><span v-html="space"></span>{{movie.movieTitle}}</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="userBox" v-if="user_show">
                 <div style="margin-left: 20px;margin-top: 20px">
                     <div style="height: 40px"><p><span>账号：</span>{{userInfo.id}}</p></div>
                     <div style="height: 40px"><p><span>密码：</span>{{userInfo.code}}</p></div>
@@ -18,12 +37,25 @@
                     <div style="height: 40px" v-if="userInfo.mailbox!=null">
                         <p><span>邮箱：</span>{{userInfo.mailbox}}</p>
                     </div>
+                    <div style="margin-left: 30px;">
+                        <el-button @click="logout">退出登录</el-button>
+                    </div>
+                    <div style="height: 20px"></div>
                 </div>
             </div>
         </div>
         <div style="height: 30px"></div>
         <div class="middle">
-            <div class="movieName">{{info.movieTitle}}</div>
+            <div class="movieName" v-show="collected==0">
+                <div style="float: left"><span>{{info.movieTitle}}</span></div>
+                <span v-html="msg"></span>
+                <img :src="require('../assets/uncollect.jpg')" @click="collect" style="height: 25px;cursor: pointer">
+            </div>
+            <div class="movieName" v-show="collected==1">
+                <div style="float: left"><span>{{info.movieTitle}}</span></div>
+                <span v-html="msg"></span>
+                <img :src="require('../assets/collected.jpg')" @click="cancel_collect" style="height: 25px;cursor: pointer">
+            </div>
             <div style="float: left;width: 60%">
                 <div style="height: 30px;width: 100%"></div>
                 <div style="float: left;width: 30%">
@@ -87,9 +119,14 @@
         name: 'MovieInfo',
         data(){
             return{
+                msg: '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+                space: '<span>&nbsp;&nbsp;</span>',
                 userId: '',
                 userInfo: '',
-                user_show: 0,
+                fav_show: false,
+                user_show: false,
+                collected: 0,
+                collectedMovie: [],
                 movieId: '',
                 info: '',
                 moreInfo: '',
@@ -109,7 +146,7 @@
             this.movieId = this.$route.query.movie_id;
 
             axios.post(
-                'http://localhost:8866/get/movie/info',
+                'http://chenda.work:8866/get/movie/info',
                 {
                     movieId: this.movieId
                 }
@@ -127,8 +164,50 @@
 
             });
 
+            //查询电影是否被收藏
             axios.post(
-                'http://localhost:8866/get/movie/moreInfo',
+                'http://chenda.work:8866/check/isFavourite',
+                {
+                    userId: this.userId,
+                    movieId: this.movieId
+                }
+            ).then((res)=>{
+                if(res.data==1){
+                    this.collected = 1;
+                }
+            }).catch(function (error) {
+                console.log(JSON.stringify(error));
+                console.log(error.result);
+            }).finally(function () {
+
+            });
+
+            //获取收藏夹电影列表
+            axios.post(
+                'http://chenda.work:8866/get/favourites',
+                {
+                    id: this.userId
+                }
+            ).then((res)=>{
+                this.collectedMovie = res.data;
+                let pic = '';
+                let s = 0.0;
+                for(let i=0;i<this.collectedMovie.length;i++){
+                    pic = this.collectedMovie[i].movieId + '.jpg';
+                    this.collectedMovie[i].movieId = 'http://chenda.work/imdb/jpg/'+pic;
+                    s = this.collectedMovie[i].avgScore;
+                    this.collectedMovie[i].avgScore = s*2.0;
+                }
+            }).catch(function (error) {
+                console.log(JSON.stringify(error));
+                console.log(error.result);
+            }).finally(function () {
+
+            });
+
+            //查询电影所属分类
+            axios.post(
+                'http://chenda.work:8866/get/movie/moreInfo',
                 {
                     movieId: this.movieId
                 }
@@ -178,8 +257,9 @@
 
             });
 
+            //检查电影是否已评分
             axios.post(
-                'http://localhost:8866/check/isMark',
+                'http://chenda.work:8866/check/isMark',
                 {
                     userId: this.userId,
                     movieId: this.movieId
@@ -197,6 +277,102 @@
             });
         },
         methods: {
+
+            //用户退出登录
+            logout(){
+                // 用户登出，清除session
+                window.sessionStorage.removeItem('user');
+                window.sessionStorage.removeItem('userInfo');
+                console.log("用户退出！");
+                // 返回登录页
+                this.$router.push('/');
+            },
+
+            //主页面(Film)跳转
+            toFilm(){
+                this.$router.push({name: 'Film'});
+            },
+
+            //分类页面跳转
+            toClassify(){
+                this.$router.push({name: 'Classify'});
+            },
+
+            //前往电影详情页面（movieId字符串是图片路径）
+            toMovieInfo(id){
+                let index1 = id.lastIndexOf("/");
+                let index2 = id.lastIndexOf(".");
+                id = id.substring(index1+1, index2);
+                this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
+                this.$router.go(0);
+            },
+
+            //收藏电影
+            collect(){
+              axios.post(
+                  'http://chenda.work:8866/add/favourites',
+                  {
+                      userId: this.userId,
+                      movieId: this.movieId
+                  }
+              ).then((res)=>{
+                  if(res.data==1){
+                      this.collected = 1;
+                      let film = this.info;
+                      this.collectedMovie.push(film);
+                  }
+                  else
+                      alert("服务器繁忙，请稍后再试");
+              }).catch(function (error) {
+                  console.log(JSON.stringify(error));
+                  console.log(error.result);
+              }).finally(function () {
+
+              })
+            },
+
+            //取消收藏电影
+            cancel_collect(){
+                axios.post(
+                    'http://chenda.work:8866/cancel/favourites',
+                    {
+                        userId: this.userId,
+                        movieId: this.movieId
+                    }
+                ).then((res)=>{
+                    if(res.data==1){
+                        this.collected = 0;
+                        //获取收藏夹电影列表
+                        axios.post(
+                            'http://chenda.work:8866/get/favourites',
+                            {
+                                id: this.userId
+                            }
+                        ).then((res)=>{
+                            this.collectedMovie = res.data;
+                            let pic = '';
+                            let s = 0.0;
+                            for(let i=0;i<this.collectedMovie.length;i++){
+                                pic = this.collectedMovie[i].movieId + '.jpg';
+                                this.collectedMovie[i].movieId = 'http://chenda.work/imdb/jpg/'+pic;
+                                s = this.collectedMovie[i].avgScore;
+                                this.collectedMovie[i].avgScore = s*2.0;
+                            }
+                        }).catch(function (error) {
+                            console.log(JSON.stringify(error));
+                            console.log(error.result);
+                        })
+                    }
+                    else
+                        alert("服务器繁忙，请稍后再试");
+                }).catch(function (error) {
+                    console.log(JSON.stringify(error));
+                    console.log(error.result);
+                }).finally(function () {
+
+                })
+            },
+
             //评分鼠标悬停事件
             onStar(mark){
                 if(mark==0){
@@ -229,7 +405,7 @@
             markDown(starWidth){
                 let score = starWidth / 20;
                 axios.post(
-                    'http://localhost:8866/add/markMovie',
+                    'http://chenda.work:8866/add/markMovie',
                     {
                         userId: this.userId,
                         movieId: this.movieId,
@@ -275,16 +451,51 @@
         height: 40px;
         cursor: pointer;
     }
+    .me{
+        float: left;
+        height: 40px;
+        width: 50%;
+        cursor: pointer;
+    }
     .userBox{
         width: 200px;
-        height: 260px;
         position: absolute;
         top: 30px;
-        right: 8%;
+        right: 3%;
         z-index: 1000;
+        font-weight: 300;
         background: white;
         border: 2px solid #DDDDDD;
         border-radius: 20px;
+    }
+    .favourites{
+        width: 200px;
+        height: 250px;
+        position: absolute;
+        top: 30px;
+        right: 8%;
+        z-index: 900;
+        font-weight: 300;
+        background: white;
+        overflow: auto;
+        border: 2px solid #DDDDDD;
+        border-radius: 20px;
+    }
+    .oneMovie{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        height: 50px;
+        width: 180px;
+    }
+    .oneMovie:hover{
+        color: #1590d1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        height: 50px;
+        width: 180px;
+        cursor: pointer;
     }
     .middle{
         width: 80%;

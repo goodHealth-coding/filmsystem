@@ -14,7 +14,7 @@
                     </div>
                     <div style="height: 30px;"></div>
                     <i class="fa fa-user-o fa-2x" aria-hidden="true" style="float:left"></i>
-                    <el-input v-model="userName" placeholder="用户名" style="width:250px"></el-input>
+                    <el-input v-model="userId" placeholder="用户名" style="width:250px"></el-input>
                     <div style="height: 30px;"></div>
                     <i class="fa fa-address-book fa-2x" aria-hidden="true" style="float:left"></i>
                     <el-input v-model="password" placeholder="密码" style="width:250px" show-password></el-input>

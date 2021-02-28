@@ -4,13 +4,30 @@
             <div class="logo">
                 <span style="font-size: 35px;margin-left: 20px">土豆电影</span>
                 <span v-html="msg"></span>
+                <span style="font-size: 13px;cursor: pointer;" @click="toFilm">主页</span>
+                <span v-html="msg"></span>
                 <span style="font-size: 13px;cursor: pointer;" @click="toClassify">分类</span>
             </div>
             <div style="width: 10%;height: 10px"></div>
-            <div class="person" v-on:mouseover="user_show=1" v-on:mouseout="user_show=0">
-                <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%">
+            <div class="person">
+                <div class="me" v-on:mousedown="fav_show=!fav_show">
+                    <img :src="require('../assets/favourite.jpg')" style="height: 40px;border-radius: 50%">
+                </div>
+                <div class="me" v-on:mousedown="user_show=!user_show">
+                    <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%;">
+                </div>
             </div>
-            <div class="userBox" v-show="user_show">
+            <div class="favourites" v-if="fav_show">
+                <div style="height: 10px"></div>
+                <ul style="margin-left: 10px">
+                    <li class="oneMovie" v-for="(movie, index) in collectedMovie" v-bind:key="index"
+                        @click="toMovieInfo(movie.movieId)">
+                        <img :src="movie.movieId" style="float: left;width: 30px;height: 30px;border-radius: 50%">
+                        <div style="margin-top: 6px;"><span v-html="space"></span>{{movie.movieTitle}}</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="userBox" v-if="user_show">
                 <div style="margin-left: 20px;margin-top: 20px">
                     <div style="height: 40px"><p><span>账号：</span>{{userInfo.id}}</p></div>
                     <div style="height: 40px"><p><span>密码：</span>{{userInfo.code}}</p></div>
@@ -20,6 +37,10 @@
                     <div style="height: 40px" v-if="userInfo.mailbox!=null">
                         <p><span>邮箱：</span>{{userInfo.mailbox}}</p>
                     </div>
+                    <div style="margin-left: 30px;">
+                        <el-button @click="logout">退出登录</el-button>
+                    </div>
+                    <div style="height: 20px"></div>
                 </div>
             </div>
         </div>
@@ -70,7 +91,7 @@
                 <div class="line_s"><span class="mid_text">口碑榜</span></div>
                 <div style="height: 50px"></div>
                 <ol style="margin-left: 8%">
-                    <li v-for="(movie, index) in high_score" v-bind:key="index" style="color: #0f80ff">
+                    <li v-for="(movie, index) in high_score" v-bind:key="index" style="color: #1590d1">
                         <span class="ranking" @click="toMovieInfo1(movie.movieId)">{{movie.movieTitle}}</span>
                         <div style="height: 20px;"></div>
                     </li>
@@ -153,10 +174,13 @@
         data() {
             return {
                 msg: '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+                space: '<span>&nbsp;&nbsp;</span>',
                 userId: '',
                 userInfo: '',
-                user_show: 0,
-                popular_movie:[],
+                fav_show: false,
+                user_show: false,
+                collectedMovie: [],
+                popular_movie: [],
                 popular_show: 1,
                 high_score: [],
                 recommend: [],
@@ -182,6 +206,29 @@
                 console.log(JSON.stringify(error));
                 console.log(error.result);
             }).finally(function (error) {
+
+            });
+
+            //获取收藏夹电影列表
+            axios.post(
+                'http://chenda.work:8866/get/favourites',
+                {
+                    id: this.userId
+                }
+            ).then((res)=>{
+                this.collectedMovie = res.data;
+                let pic = '';
+                let s = 0.0;
+                for(let i=0;i<this.collectedMovie.length;i++){
+                    pic = this.collectedMovie[i].movieId + '.jpg';
+                    this.collectedMovie[i].movieId = 'http://chenda.work/imdb/jpg/'+pic;
+                    s = this.collectedMovie[i].avgScore;
+                    this.collectedMovie[i].avgScore = s*2.0;
+                }
+            }).catch(function (error) {
+                console.log(JSON.stringify(error));
+                console.log(error.result);
+            }).finally(function () {
 
             });
 
@@ -242,6 +289,16 @@
         },
         methods: {
 
+            //用户退出登录
+            logout(){
+                // 用户登出，清除session
+                window.sessionStorage.removeItem('user');
+                window.sessionStorage.removeItem('userInfo');
+                console.log("用户退出！");
+                // 返回登录页
+                this.$router.push('/');
+            },
+
             //猜你喜欢换页
             changeRec(mark){
                 if(mark==-1){
@@ -259,10 +316,17 @@
                     }
                 }
             },
+
+            //主页面(Film)跳转
+            toFilm(){
+                this.$router.push({name: 'Film'});
+            },
+
             //分类页面跳转
             toClassify(){
                 this.$router.push({name: 'Classify'});
             },
+
             //前往电影详情页面（movieId字符串是图片路径）
             toMovieInfo(id){
                 let index1 = id.lastIndexOf("/");
@@ -270,6 +334,7 @@
                 id = id.substring(index1+1, index2);
                 this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
             },
+
             //前往电影详情页面（movieId字符串是电影id）
             toMovieInfo1(id){
                 this.$router.push({path: '/MovieInfo', query: {movie_id: id}});
@@ -294,15 +359,49 @@
         height: 40px;
         float: left;
         width: 10%;
+    }
+    .me{
+        float: left;
+        height: 40px;
+        width: 50%;
+        cursor: pointer;
+    }
+    .favourites{
+        width: 200px;
+        height: 250px;
+        position: absolute;
+        top: 30px;
+        right: 8%;
+        z-index: 900;
+        font-weight: 300;
+        background: white;
+        overflow: auto;
+        border: 2px solid #DDDDDD;
+        border-radius: 20px;
+    }
+    .oneMovie{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        height: 50px;
+        width: 180px;
+    }
+    .oneMovie:hover{
+        color: #1590d1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        height: 50px;
+        width: 180px;
         cursor: pointer;
     }
     .userBox{
         width: 200px;
-        height: 260px;
         position: absolute;
         top: 30px;
-        right: 8%;
+        right: 3%;
         z-index: 1000;
+        font-weight: 300;
         background: white;
         border: 2px solid #DDDDDD;
         border-radius: 20px;
@@ -353,11 +452,11 @@
         transform: translateX(-50%) translateY(-50%);
     }
     .ranking{
-        color: #0f80ff;
+        color: #1590d1;
         font-size: 14px;
     }
     .ranking:hover{
-        background-color: rgba(16,91,168,0.86);
+        background-color: #1590d1;
         color: white;
         cursor: pointer;
     }
