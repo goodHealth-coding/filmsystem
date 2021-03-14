@@ -11,10 +11,10 @@
             <div style="width: 10%;height: 10px"></div>
             <div class="person">
                 <div class="me" v-on:mousedown="fav_show=!fav_show">
-                    <img :src="require('../assets/img/favourite.jpg')" style="height: 40px;width: 70%;border-radius: 50%">
+                    <img :src="require('../assets/favourite.jpg')" style="height: 40px;width: 70%;border-radius: 50%">
                 </div>
                 <div class="me" v-on:mousedown="user_show=!user_show">
-                    <img :src="require('../assets/img/me.jpg')" style="height: 40px;width: 70%;border-radius: 50%;">
+                    <img :src="require('../assets/me.jpg')" style="height: 40px;width: 70%;border-radius: 50%;">
                 </div>
             </div>
             <div class="favourites" v-if="fav_show">
@@ -49,12 +49,12 @@
             <div class="movieName" v-show="collected==0">
                 <div style="float: left"><span>{{info.movieTitle}}</span></div>
                 <span v-html="msg"></span>
-                <img :src="require('../assets/img/uncollect.jpg')" @click="collect" style="height: 25px;cursor: pointer">
+                <img :src="require('../assets/uncollect.jpg')" @click="collect" style="height: 25px;cursor: pointer">
             </div>
             <div class="movieName" v-show="collected==1">
                 <div style="float: left"><span>{{info.movieTitle}}</span></div>
                 <span v-html="msg"></span>
-                <img :src="require('../assets/img/collected.jpg')" @click="cancel_collect" style="height: 25px;cursor: pointer">
+                <img :src="require('../assets/collected.jpg')" @click="cancel_collect" style="height: 25px;cursor: pointer">
             </div>
             <div style="float: left;width: 60%">
                 <div style="height: 30px;width: 100%"></div>

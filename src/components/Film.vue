@@ -11,10 +11,10 @@
             <div style="width: 10%;height: 10px"></div>
             <div class="person">
                 <div class="me" v-on:mousedown="fav_show=!fav_show">
-                    <img :src="require('../assets/img/favourite.jpg')" style="height: 40px;border-radius: 50%">
+                    <img :src="require('../assets/favourite.jpg')" style="height: 40px;border-radius: 50%">
                 </div>
                 <div class="me" v-on:mousedown="user_show=!user_show">
-                    <img :src="require('../assets/img/me.jpg')" style="height: 40px;border-radius: 50%;">
+                    <img :src="require('../assets/me.jpg')" style="height: 40px;border-radius: 50%;">
                 </div>
             </div>
             <div class="favourites" v-if="fav_show">
@@ -51,8 +51,8 @@
             <div style="width: 60%;">
                 <div style="color: rgba(11,21,22,0.38);float: right;font-size: 14px">{{popular_show}}/2</div>
                 <div style="cursor: pointer">
-                    <img :src="require('../assets/img/left_arrow.jpg')" height="23px" @click="popular_show=1">
-                    <img :src="require('../assets/img/right_arrow.jpg')" height="24px" @click="popular_show=2">
+                    <img :src="require('../assets/left_arrow.jpg')" height="23px" @click="popular_show=1">
+                    <img :src="require('../assets/right_arrow.jpg')" height="24px" @click="popular_show=2">
                 </div>
             </div>
             <div class="line"></div>
@@ -103,8 +103,8 @@
             <div style="width: 60%;">
                 <div style="color: rgba(11,21,22,0.38);float: right;font-size: 14px">{{rec_show}}/3</div>
                 <div style="cursor: pointer">
-                    <img :src="require('../assets/img/left_arrow.jpg')" height="23px" @click="changeRec(-1)">
-                    <img :src="require('../assets/img/right_arrow.jpg')" height="24px" @click="changeRec(1)">
+                    <img :src="require('../assets/left_arrow.jpg')" height="23px" @click="changeRec(-1)">
+                    <img :src="require('../assets/right_arrow.jpg')" height="24px" @click="changeRec(1)">
                 </div>
             </div>
             <div class="line"></div>

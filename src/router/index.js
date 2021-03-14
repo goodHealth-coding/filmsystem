@@ -9,15 +9,9 @@ Vue.use(Router)
 
 export default new Router({
     mode:'history',
-    base: '/potato/',
     routes: [
         {
             path: '/',
-            redirect: '/Login',//设置默认指向的路径
-            name: '主页'
-        },
-        {
-            path: '/Login',
             name: 'Login',
             component: Login,
             meta:{
@@ -36,20 +30,12 @@ export default new Router({
         {
             path: '/Classify',
             name: 'Classify',
-            component: Classify,
-            meta:{
-                title: 'film',
-                needLogin: true,
-            }
+            component: Classify
         },
         {
             path: '/MovieInfo',
             name: 'MovieInfo',
-            component: MovieInfo,
-            meta:{
-                title: 'film',
-                needLogin: true,
-            }
+            component: MovieInfo
         }
     ]
 })

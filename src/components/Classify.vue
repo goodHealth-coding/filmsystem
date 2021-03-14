@@ -11,10 +11,10 @@
             <div style="width: 10%;height: 10px"></div>
             <div class="person">
                 <div class="me" v-on:mousedown="fav_show=!fav_show">
-                    <img :src="require('../assets/img/favourite.jpg')" style="height: 40px;width: 70%;border-radius: 50%">
+                    <img :src="require('../assets/favourite.jpg')" style="height: 40px;width: 70%;border-radius: 50%">
                 </div>
                 <div class="me" v-on:mousedown="user_show=!user_show">
-                    <img :src="require('../assets/img/me.jpg')" style="height: 40px;width: 70%;border-radius: 50%;">
+                    <img :src="require('../assets/me.jpg')" style="height: 40px;width: 70%;border-radius: 50%;">
                 </div>
             </div>
             <div class="favourites" v-if="fav_show">

@@ -1,10 +1,10 @@
 <template>
     <div id="app">
         <div class="top">
-            <img :src="require('../assets/img/login_top.png')" height="70px" width="100%">
+            <img :src="require('../assets/login_top.png')" height="70px" width="100%">
         </div>
         <div class="left_bac">
-            <img :src="require('../assets/img/left_bac.png')" width="400px">
+            <img :src="require('../assets/left_bac.png')" width="400px">
         </div>
         <div class="login_box" onmouseout="style.opacity='0.8'" onmouseover="style.opacity='1'">
             <el-tabs type="border-card">
