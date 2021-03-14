@@ -46,6 +46,58 @@
         </div>
         <div style="height: 30px"></div>
         <div class="middle">
+            <div style="color: rgba(101, 101, 101, 1)">最新电影</div>
+            <div style="height: 15px"></div>
+            <div style="width: 60%;">
+                <div style="color: rgba(11,21,22,0.38);float: right;font-size: 14px">{{latest_show}}/2</div>
+                <div style="cursor: pointer">
+                    <img :src="require('../assets/img/left_arrow.jpg')" height="23px" @click="latest_show=1">
+                    <img :src="require('../assets/img/right_arrow.jpg')" height="24px" @click="latest_show=2">
+                </div>
+            </div>
+            <div class="line"></div>
+            <div style="height: 20px;"></div>
+            <ul class="film_list">         <!--  最新电影列表  -->
+                <li class="hot_film" v-for="(movie, index) in latest_movie" v-bind:key="index">
+                    <div v-if="index<10 && latest_show==1"  @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                    <div v-if="index>9 && latest_show==2" @click="toMovieInfo(movie.movieId)">
+                        <img :src=movie.movieId alt="图片" width="80%" :title="movie.movieTitle">
+                        <div class="movie_name" :title="movie.movieTitle">{{movie.movieTitle}}</div>
+                        <div style="width: 80%;height: 36px">
+                            <center>
+                                <div class="star">
+                                    <div class="greyStar" :style="{width:movie.avgScore*10 + 'px'}"></div>
+                                    <div class="lightStar"></div>
+                                    <span class="num">{{movie.avgScore}}分</span>
+                                </div>
+                            </center>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="charts">   <!-- 口碑榜 -->
+                <div class="line_s"><span class="mid_text">口碑榜</span></div>
+                <div style="height: 50px"></div>
+                <ol style="margin-left: 8%">
+                    <li v-for="(movie, index) in high_score" v-bind:key="index" style="color: #1590d1">
+                        <span class="ranking" @click="toMovieInfo1(movie.movieId)">{{movie.movieTitle}}</span>
+                        <div style="height: 20px;"></div>
+                    </li>
+                </ol>
+            </div>
+            <div style="width: 60%;color: white;font-size: 30px">土豆电影</div>
             <div style="color: rgba(101, 101, 101, 1)">热门电影</div>
             <div style="height: 15px"></div>
             <div style="width: 60%;">
@@ -87,16 +139,6 @@
                     </div>
                 </li>
             </ul>
-            <div class="charts">
-                <div class="line_s"><span class="mid_text">口碑榜</span></div>
-                <div style="height: 50px"></div>
-                <ol style="margin-left: 8%">
-                    <li v-for="(movie, index) in high_score" v-bind:key="index" style="color: #1590d1">
-                        <span class="ranking" @click="toMovieInfo1(movie.movieId)">{{movie.movieTitle}}</span>
-                        <div style="height: 20px;"></div>
-                    </li>
-                </ol>
-            </div>
             <div style="width: 60%;color: white;font-size: 30px">土豆电影</div>
             <div style="color: rgba(101, 101, 101, 1);width: 60%">猜你喜欢</div>
             <div style="height: 20px;width: 60%"></div>
@@ -181,6 +223,8 @@
                 user_show: false,
                 collectedMovie: [],
                 popular_movie: [],
+                latest_movie: [],
+                latest_show: 1,
                 popular_show: 1,
                 high_score: [],
                 recommend: [],
@@ -231,6 +275,26 @@
             }).finally(function () {
 
             });
+
+            // 获取20部最新电影
+            axios.post(
+                'http://chenda.work:8866/get/movieList/lastTwentyUpdate',
+            ).then((res)=>{
+                this.latest_movie = res.data;
+                let pic = '';
+                let s = 0.0;
+                for(let i=0;i<this.latest_movie.length;i++){
+                    pic = this.latest_movie[i].movieId + '.jpg';
+                    this.latest_movie[i].movieId = 'http://chenda.work/imdb/jpg/'+pic;
+                    s = this.latest_movie[i].avgScore;
+                    this.latest_movie[i].avgScore = s*2.0;
+                }
+            }).catch(function (error) {
+                console.log(JSON.stringify(error));
+                console.log(error.result);
+            }).finally(function () {
+
+            })
 
             // 获取前20热度的电影
             axios.post(
